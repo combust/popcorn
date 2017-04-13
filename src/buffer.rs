@@ -51,20 +51,9 @@ impl From<native::Error> for Error {
 }
 
 #[derive(Debug)]
-/// Container that handles synchronization of [Memory][1] of type `T`.
-/// [1]: ../memory/index.html
 pub struct Buffer<T: Copy + Sized + Send + 'static> {
-  /// Size of this buffer. Because we don't store
-  /// The contents in a slice, this information
-  /// Needs to be saved separately from the memory
   size: usize,
-
-  /// Copies of this Buffer on different devices
-  /// Does not include the latest copy
   copies: HashMap<BufferDevice, BufferMemory>,
-
-  /// Latest copy of the memory, this is paired with the
-  /// latest_event field to indicate when this memory is ready
   latest_source: BufferSource,
 
   _pd: PhantomData<T>,

@@ -32,21 +32,17 @@ impl IFramework for Framework {
   type D = Device;
   type Error = error::Error;
 
-  /// Defines the Framework by a Name.
   fn name() -> &'static str { "native" }
 
-  /// Initializes a new Framework.
   fn new() -> Self where Self: Sized {
     Framework { }
   }
 
-  /// Initializes all the available hardwares.
   fn load_hardwares(&self) -> Result<Vec<Self::H>, Self::Error> {
     let cpu = Hardware::new();
     Ok(vec![cpu])
   }
 
-  /// Initializes a new Device from the provided hardware.
   fn new_device(&self, hardware: &Self::H) -> Result<Self::D, Self::Error> {
     let mut builder = Builder::new();
     builder.name_prefix(hardware.name());
