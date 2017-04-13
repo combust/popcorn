@@ -1,0 +1,16 @@
+[package]
+name = "popcorn-blas"
+version = "0.1.0"
+authors = ["Hollin Wilkins <hollinrwilkins@gmail.com>"]
+
+[dependencies]
+futures = "0.1.13"
+futures-cpupool = "0.1.5"
+
+[dependencies.popcorn]
+path = ".."
+version = "0.1"
+
+[dependencies.blas-sys]
+version = "0.6.6"
+default-features = false
