@@ -34,25 +34,6 @@ impl BroadcastDimension {
   }
 }
 
-/// Whether two shapes are compatible for broadcasting.
-///
-/// ```
-/// use mleap_tensor::core::broadcast::compatible;
-///
-/// let shape1: Vec<usize> = vec![5, 2, 3, 1, 1];
-/// let shape2: Vec<usize> = vec![3, 1, 7];
-/// let shape3: Vec<usize> = vec![1];
-/// let shape4: Vec<usize> = vec![5, 6, 12];
-/// let shape5: Vec<usize> = vec![1, 1, 1];
-///
-/// assert!(compatible(&shape1, &shape2));
-/// assert!(compatible(&shape1, &shape3));
-/// assert!(!compatible(&shape1, &shape4));
-/// assert!(compatible(&shape2, &shape3));
-/// assert!(!compatible(&shape2, &shape4));
-/// assert!(compatible(&shape3, &shape4));
-/// assert!(compatible(&shape4, &shape5));
-/// ```
 pub fn compatible<'a>(shape1: &'a [usize],
                       shape2: &'a [usize]) -> bool {
   shape1.iter().rev().zip(shape2.iter().rev()).all(|(&a, &b)| {

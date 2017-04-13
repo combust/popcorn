@@ -5,7 +5,7 @@ authors = ["Hollin Wilkins <hollinrwilkins@gmail.com>"]
 description = "Popcorn BLAS: Broadcasting BLAS operations for Popcorn"
 repository = "https://github.com/combust/popcorn"
 readme = "../README.md"
-keyworks = ["ml", "tensor", "gpu", "blas"]
+keywords = ["ml", "tensor", "gpu", "blas"]
 license = "Apache-2.0"
 
 [dependencies]
@@ -19,3 +19,4 @@ version = "0.1"
 [dependencies.blas-sys]
 version = "0.6.6"
 default-features = false
+features = ["accelerate"]

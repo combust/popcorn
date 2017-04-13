@@ -20,6 +20,16 @@ pub enum BufferDevice {
   Native(native::Device)
 }
 
+#[cfg(feature = "native")]
+impl From<native::Device> for BufferDevice {
+  fn from(dev: native::Device) -> BufferDevice { BufferDevice::Native(dev) }
+}
+
+#[cfg(feature = "native")]
+impl<'a> From<&'a native::Device> for BufferDevice {
+  fn from(dev: &'a native::Device) -> BufferDevice { BufferDevice::Native(dev.clone()) }
+}
+
 #[derive(Debug)]
 pub enum BufferMemory {
   #[cfg(feature = "native")]
@@ -61,15 +71,17 @@ pub struct Buffer<T: Copy + Sized + Send + 'static> {
 }
 
 impl<T: Send + Copy + Sized + 'static> Buffer<T> {
-  pub fn new(dev: &BufferDevice, size: usize) -> Result<Buffer<T>, Error> {
+  pub fn new<D: Into<BufferDevice>>(dev: D, size: usize) -> Result<Buffer<T>, Error> {
+    let bdev: BufferDevice = dev.into();
     let mut copies = HashMap::new();
-    let copy = try!(Self::alloc_on_device(dev, size * mem::size_of::<T>()));
-    copies.insert(dev.clone(), copy);
+    let latest_source = Self::device_source(&bdev);
+    let copy = try!(Self::alloc_on_device(&bdev, size * mem::size_of::<T>()));
+    copies.insert(bdev, copy);
 
     Ok(Buffer {
       size: size,
       copies: copies,
-      latest_source: Self::device_source(dev),
+      latest_source: latest_source,
       _pd: PhantomData
     })
   }
@@ -96,11 +108,12 @@ impl<T: Send + Copy + Sized + 'static> Buffer<T> {
     }
   }
 
-  pub fn sync_from_vec(mut self, vec: Vec<T>, dev: &BufferDevice) -> Box<Future<Item=Buffer<T>,Error=Error>> {
-    let copy = self.copies.remove(dev);
+  pub fn sync_from_vec<D: Into<BufferDevice>>(mut self, vec: Vec<T>, dev: D) -> Box<Future<Item=Buffer<T>,Error=Error>> {
+    let bdev: BufferDevice = dev.into();
+    let copy = self.copies.remove(&bdev);
     match copy {
       Some(mem) => {
-        match *dev {
+        match bdev {
           #[cfg(feature = "native")]
           BufferDevice::Native(ref dev) => {
             let BufferMemory::Native(m) = mem;
@@ -117,11 +130,12 @@ impl<T: Send + Copy + Sized + 'static> Buffer<T> {
     }
   }
 
-  pub fn sync_to_vec(mut self, dev: &BufferDevice) -> Box<Future<Item=(Buffer<T>, Vec<T>),Error=Error>> {
-    let copy = self.copies.remove(dev);
+  pub fn sync_to_vec<D: Into<BufferDevice>>(mut self, dev: D) -> Box<Future<Item=(Buffer<T>, Vec<T>),Error=Error>> {
+    let bdev: BufferDevice = dev.into();
+    let copy = self.copies.remove(&bdev);
     match copy {
       Some(mem) => {
-        match *dev {
+        match bdev {
           #[cfg(feature = "native")]
           BufferDevice::Native(ref dev) => {
             let BufferMemory::Native(m) = mem;
