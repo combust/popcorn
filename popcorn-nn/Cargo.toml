@@ -1,0 +1,17 @@
+[package]
+name = "popcorn-nn"
+version = "0.1.0"
+authors = ["Hollin Wilkins <hollinrwilkins@gmail.com>"]
+description = "Popcorn NN: Neural Network Operations for Popcorn"
+repository = "https://github.com/combust/popcorn"
+readme = "../README.md"
+keywords = ["ml", "tensor", "gpu", "blas"]
+license = "Apache-2.0"
+
+[dependencies]
+futures = "0.1.13"
+futures-cpupool = "0.1.5"
+
+[dependencies.popcorn]
+path = ".."
+version = "0.1"
