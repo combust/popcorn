@@ -1,10 +1,10 @@
 [package]
-name = "popcorn"
+name = "popcorn-butter"
 version = "0.1.0"
 authors = ["Hollin Wilkins <hollinrwilkins@gmail.com>"]
-description = "Popcorn: Start popping kernels on your CPUs and GPUs"
+description = "Popcorn Butter: Use Popcorn engine with a graph execution engine"
 repository = "https://github.com/combust/popcorn"
-readme = "README.md"
+readme = "../README.md"
 keywords = ["ml", "tensor", "gpu"]
 license = "Apache-2.0"
 
@@ -12,11 +12,10 @@ license = "Apache-2.0"
 futures = "0.1.13"
 futures-cpupool = "0.1.5"
 
-[features]
-default = ["native", "cuda", "opencl"]
-native = []
-cuda = []
-opencl = []
+[dependencies.popcorn]
+path = ".."
+version = "0.1"
 
-[workspace]
-members = ["popcorn-blas", "popcorn-butter"]
+[dependencies.popcorn-blas]
+path = "../popcorn-blas"
+version = "0.1"
