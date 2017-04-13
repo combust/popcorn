@@ -10,7 +10,7 @@ use std::fmt;
 
 pub use self::core_ops::*;
 
-impl<B: Backend<Framework>, T: Dot + fmt::Debug + Copy + Sized + Send + 'static> DotOperation<T> for B {
+impl<B: Backend<Framework>, T: Dot + fmt::Debug + Sync + Copy + Sized + Send + 'static> DotOperation<T> for B {
   fn bcast_dot(&self,
                shape_a: Buffer<usize>,
                a: Buffer<T>,

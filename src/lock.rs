@@ -23,6 +23,9 @@ impl<T> Lock<T> {
   }
 
   pub fn try_lock(&self) -> Result<LockGuard<T>, Error> {
+    // TODO: This implementation is incorrect, but will work in most
+    //   cases. This function needs to be synchronized somehow
+
     if Arc::strong_count(&self.arc) == 1 {
       Ok(LockGuard {
         arc: self.arc.clone()

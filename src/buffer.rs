@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use std::mem;
 use std::collections::HashMap;
 use device::Device;
-use lock::{Lock, LockGuard};
+use lock::{self, Lock, LockGuard};
 use std::ops::{Deref, DerefMut};
 
 use frameworks::native;
@@ -41,6 +41,7 @@ pub enum Error {
   #[cfg(feature = "native")]
   Native(native::Error),
 
+  Lock(lock::Error),
   InvalidRawBuffer,
   InvalidDevice,
   InvalidBroadcast
@@ -49,6 +50,10 @@ pub enum Error {
 #[cfg(feature = "native")]
 impl From<native::Error> for Error {
   fn from(err: native::Error) -> Error { Error::Native(err) }
+}
+
+impl From<lock::Error> for Error {
+  fn from(err: lock::Error) -> Error { Error::Lock(err) }
 }
 
 pub struct Buffer<T: Copy + Sized + Send + 'static> {
@@ -146,6 +151,11 @@ impl<T: Send + Copy + Sized + 'static> Buffer<T> {
   pub fn new<D: Into<BufferDevice>>(dev: D, size: usize) -> Result<Buffer<T>, Error> {
     let raw = try!(RawBuffer::new(dev, size));
     Ok(raw.into())
+  }
+
+  pub fn from_lock(lock: Lock<RawBuffer<T>>) -> Result<Buffer<T>, Error> {
+    let guard = try!(lock.try_lock());
+    Ok(Self::from_guard(guard))
   }
 
   pub fn from_guard(guard: LockGuard<RawBuffer<T>>) -> Buffer<T> {
