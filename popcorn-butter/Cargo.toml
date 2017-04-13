@@ -12,6 +12,10 @@ license = "Apache-2.0"
 futures = "0.1.13"
 futures-cpupool = "0.1.5"
 
+[dependencies.uuid]
+version = "0.4"
+features = ["v4"]
+
 [dependencies.popcorn]
 path = ".."
 version = "0.1"

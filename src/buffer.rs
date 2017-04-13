@@ -30,7 +30,7 @@ impl<'a> From<&'a native::Device> for BufferDevice {
   fn from(dev: &'a native::Device) -> BufferDevice { BufferDevice::Native(dev.clone()) }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BufferMemory {
   #[cfg(feature = "native")]
   Native(native::Memory)
@@ -50,7 +50,7 @@ impl From<native::Error> for Error {
   fn from(err: native::Error) -> Error { Error::Native(err) }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Buffer<T: Copy + Sized + Send + 'static> {
   size: usize,
   copies: HashMap<BufferDevice, BufferMemory>,

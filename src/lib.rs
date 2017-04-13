@@ -33,6 +33,6 @@ mod test {
     let f2 = f1.and_then(|x| x.sync_to_vec(dev));
     let (_, nv) = f2.wait().unwrap();
 
-    println!("HELLO: {:?}", nv);
+    assert_eq!(nv, vec![23.0, 45.5, 54.2, 42.0]);
   }
 }
