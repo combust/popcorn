@@ -2,33 +2,34 @@ use std::result::Result;
 use std::mem;
 use std::ptr;
 use std::slice;
+use std::sync::{Arc, RwLock};
 
 use super::Error;
 use memory;
 
 #[derive(Debug, Clone)]
 pub struct Memory {
-  buf: Box<[u8]>
+  buf: Arc<RwLock<Box<[u8]>>>
 }
 
 impl Memory {
   pub fn alloc(size: usize) -> Memory {
     let vec: Vec<u8> = vec![0; size];
-    let bx: Box<[u8]> = vec.into_boxed_slice();
+    let buf = Arc::new(RwLock::new(vec.into_boxed_slice()));
 
     Memory {
-      buf: bx
+      buf: buf
     }
   }
 
-  pub fn len(&self) -> usize { self.buf.len() }
+  pub fn len(&self) -> usize { self.buf.read().unwrap().len() }
 
   pub fn as_ptr(&self) -> *const u8 {
-    self.buf.as_ptr()
+    self.buf.read().unwrap().as_ptr()
   }
 
   pub fn as_mut_ptr(&mut self) -> *mut u8 {
-    self.buf.as_mut_ptr()
+    self.buf.write().unwrap().as_mut_ptr()
   }
 
   pub fn try_as_slice<T: Sized + Copy>(&self) -> Result<&[T], Error> {
@@ -67,7 +68,7 @@ impl Memory {
     unsafe {
       let p = vs.as_ptr();
       let bytes = mem::transmute::<*const T, *const u8>(p);
-      ptr::copy_nonoverlapping(bytes, self.as_mut_ptr(), self.buf.len());
+      ptr::copy_nonoverlapping(bytes, self.as_mut_ptr(), self.len());
       Ok(())
     }
   }
@@ -79,7 +80,7 @@ impl Memory {
     }
 
     unsafe {
-      let mut buf = self.buf.clone();
+      let mut buf: Box<[u8]> = self.buf.read().unwrap().clone();
       let buf_ptr = mem::transmute::<*mut u8, *mut T>(buf.as_mut_ptr());
       let len = self.len() / mem::size_of::<T>();
       let vec = Vec::from_raw_parts(buf_ptr, len, len);
