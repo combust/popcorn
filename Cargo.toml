@@ -2,6 +2,11 @@
 name = "popcorn"
 version = "0.1.0"
 authors = ["Hollin Wilkins <hollinrwilkins@gmail.com>"]
+description = "Popcorn: Start popping kernels on your CPUs and GPUs"
+repository = "https://github.com/combust/popcorn"
+readme = "README.md"
+keyworkds = ["ml", "tensor", "gpu"]
+license = "Apache License 2.0"
 
 [dependencies]
 futures = "0.1.13"
