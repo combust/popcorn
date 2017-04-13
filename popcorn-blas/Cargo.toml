@@ -2,6 +2,11 @@
 name = "popcorn-blas"
 version = "0.1.0"
 authors = ["Hollin Wilkins <hollinrwilkins@gmail.com>"]
+description = "Popcorn BLAS: Broadcasting BLAS operations for Popcorn"
+repository = "https://github.com/combust/popcorn"
+readme = "../README.md"
+keyworkds = ["ml", "tensor", "gpu", "blas"]
+license = "Apache-2.0"
 
 [dependencies]
 futures = "0.1.13"
