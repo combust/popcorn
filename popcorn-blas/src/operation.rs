@@ -7,8 +7,8 @@ pub trait DotOperation<T: Copy + Send + 'static> {
                a: Buffer<T>,
                shape_b: Buffer<usize>,
                b: Buffer<T>,
-               mut shape_c: Buffer<usize>,
-               mut c: Buffer<T>) ->
+               shape_c: Buffer<usize>,
+               c: Buffer<T>) ->
     Box<Future<Item=(Buffer<usize>, Buffer<T>, // A
                      Buffer<usize>, Buffer<T>, // B
                      Buffer<usize>, Buffer<T>), Error=Error>>; // Result

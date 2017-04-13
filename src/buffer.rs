@@ -99,7 +99,7 @@ impl<T: Send + Copy + Sized + 'static> Buffer<T> {
   pub fn sync_from_vec(mut self, vec: Vec<T>, dev: &BufferDevice) -> Box<Future<Item=Buffer<T>,Error=Error>> {
     let copy = self.copies.remove(dev);
     match copy {
-      Some(mut mem) => {
+      Some(mem) => {
         match *dev {
           #[cfg(feature = "native")]
           BufferDevice::Native(ref dev) => {
@@ -120,7 +120,7 @@ impl<T: Send + Copy + Sized + 'static> Buffer<T> {
   pub fn sync_to_vec(mut self, dev: &BufferDevice) -> Box<Future<Item=(Buffer<T>, Vec<T>),Error=Error>> {
     let copy = self.copies.remove(dev);
     match copy {
-      Some(mut mem) => {
+      Some(mem) => {
         match *dev {
           #[cfg(feature = "native")]
           BufferDevice::Native(ref dev) => {
@@ -137,7 +137,7 @@ impl<T: Send + Copy + Sized + 'static> Buffer<T> {
     }
   }
 
-  pub fn sync(mut self, dev: &BufferDevice) -> Box<Future<Item=Buffer<T>,Error=Error>> {
+  pub fn sync(self, dev: &BufferDevice) -> Box<Future<Item=Buffer<T>,Error=Error>> {
     match self.source() {
       #[cfg(feature = "native")]
       BufferSource::Native => {

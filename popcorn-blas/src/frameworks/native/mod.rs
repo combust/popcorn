@@ -1,23 +1,12 @@
 pub mod broadcast;
+pub mod core_ops;
 
 use popcorn::frameworks::native::Framework;
 use popcorn::backend::Backend;
 use operation::*;
-use futures::{Future, IntoFuture};
-use popcorn::buffer::{self, Buffer, BufferDevice, Error};
-use blas_sys::c::cblas_sdot;
-
-trait Dot where Self: Sized {
-  fn dot(a: &[Self], b: &[Self]) -> Self;
-}
-
-impl Dot for f32 {
-  fn dot(a: &[Self], b: &[Self]) -> Self {
-    unsafe {
-      cblas_sdot(a.len() as i32, a.as_ptr(), 1, b.as_ptr(), 1)
-    }
-  }
-}
+use futures::Future;
+use popcorn::buffer::{Buffer, BufferDevice, Error};
+use self::core_ops::*;
 
 impl<T: Dot + Copy + Sized + Send + 'static> DotOperation<T> for Backend<Framework> {
   fn bcast_dot(&self,
@@ -25,8 +14,8 @@ impl<T: Dot + Copy + Sized + Send + 'static> DotOperation<T> for Backend<Framewo
                a: Buffer<T>,
                shape_b: Buffer<usize>,
                b: Buffer<T>,
-               mut shape_c: Buffer<usize>,
-               mut c: Buffer<T>) ->
+               shape_c: Buffer<usize>,
+               c: Buffer<T>) ->
     Box<Future<Item=(Buffer<usize>, Buffer<T>,
                      Buffer<usize>, Buffer<T>,
                      Buffer<usize>, Buffer<T>), Error=Error>> {
